@@ -5,7 +5,7 @@ class DashboardView(ft.Container):
         super().__init__()
         self.on_logout = on_logout
         self.expand = True
-        self.alignment = ft.alignment.center
+        self.alignment = ft.Alignment(0, 0)
         
         # Kullanıcı ID'sini görmek için alalım
         user_id = page.session.get("user_id")

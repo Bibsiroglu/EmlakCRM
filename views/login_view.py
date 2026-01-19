@@ -4,11 +4,12 @@ from services.auth_service import AuthService
 class LoginView(ft.Container):
     def __init__(self, page: ft.Page, on_success):
         super().__init__()
-        self.page = page
-        self.on_success = on_success # Başarı durumunda çalışacak fonksiyon (Router'dan gelir)
+        # HATA DÜZELTİLDİ: 'self.page' yerine 'self.main_page' yaptık
+        self.main_page = page 
+        self.on_success = on_success
         self.expand = True
-        self.alignment = ft.alignment.center
-        self.bgcolor = ft.colors.BLUE_GREY_50
+        self.alignment = ft.Alignment(0, 0)
+        self.bgcolor = ft.Colors.BLUE_GREY_50
 
         # Form Elemanları
         self.email_input = ft.TextField(label="E-posta", width=300, border_radius=10)
@@ -16,9 +17,8 @@ class LoginView(ft.Container):
 
         self.content = ft.Column(
             [
-                ft.Icon(ft.icons.SECURITY, size=80, color="blue"),
+                ft.Icon(ft.Icons.SECURITY, size=80, color="blue"),
                 ft.Text("Emlak CRM", size=30, weight="bold"),
-                ft.Text("Yönetici Girişi", color="grey"),
                 ft.Container(height=20),
                 self.email_input,
                 self.pass_input,
@@ -31,14 +31,12 @@ class LoginView(ft.Container):
         )
 
     def handle_login(self, e):
-        # Servise emir ver
         result = AuthService.login(self.email_input.value, self.pass_input.value)
         
         if result["success"]:
-            # Başarılıysa ID'yi oturuma kaydet
-            self.page.session.set("user_id", result["user"].id)
+            # DİKKAT: Burada da 'main_page' kullanıyoruz
+            self.main_page.session.set("user_id", result["user"].id)
             self.show_snack(result["message"], "green")
-            # Router'ın verdiği on_success fonksiyonunu çalıştır (Bizi Dashboard'a atar)
             self.on_success()
         else:
             self.show_snack(result["message"], "red")
@@ -49,6 +47,7 @@ class LoginView(ft.Container):
         self.show_snack(result["message"], color)
 
     def show_snack(self, msg, color):
-        self.page.snack_bar = ft.SnackBar(ft.Text(msg), bgcolor=color)
-        self.page.snack_bar.open = True
-        self.page.update()
+        # DİKKAT: Burada da 'main_page' kullanıyoruz
+        self.main_page.snack_bar = ft.SnackBar(ft.Text(msg), bgcolor=color)
+        self.main_page.snack_bar.open = True
+        self.main_page.update()
